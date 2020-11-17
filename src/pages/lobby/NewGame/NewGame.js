@@ -12,8 +12,11 @@ export default function NewGame() {
   // Step 3: let's initialize a game
   const createAndInitGame = () => {
     // let's generate a random game id
+    const newGameId = generateGameId();
     // let's update our local state
+    dispatch(setId(newGameId));
     // let's provision a new game on Astra
+    createGame(newGameId);
   };
 
   return (
