@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Button, Grid, Typography } from "@material-ui/core";
 //let's import what we need
 import { useDispatch, useSelector } from "react-redux";
@@ -8,33 +8,43 @@ export default function NewGame() {
   // let's connect Redux to our Component
   const dispatch = useDispatch();
   const { id, idError, idLoading } = useSelector(selectGame);
+  const [compliment, setCompliment] = useState("");
+  const [counter, setCounter] = useState(0);
+  const complimentList = [
+      "\"You’re not like anyone I've met before.\"",
+      "\"I'm better when I'm with you.\"",
+      "\"You’re my favorite person to spend time with.\"",
+      "\"You are my candle in darkness.\"",
+      "\"I can’t imagine my life without you in it\"",
+      "\"I smile thinking about you when I’m alone.\"",
+      "\"You have the sweetest heart\"",
+      "\"I love you\"",
+  ]
+
+  const handleClick = useCallback(() => {
+    setCompliment(complimentList[counter]);
+    setCounter((counter + 1) % complimentList.length);
+  }, [counter])
 
   return (
       <Grid container direction="row" justify="center" alignItems="center">
-        <Grid item>
-          <Typography color="textSecondary">welcome to</Typography>
-          <Typography variant="h4" style={{ marginBottom: 64 }}>
-            BattleStax
-          </Typography>
-          <Typography color="textSecondary">game code</Typography>
-          <Typography variant="h1" className="highlight">
-            {/* let's display the game id */}
-            {id || "----"}
+        <Grid item style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+          <Typography variant="h5"  style={{ marginBottom: 64 }}>Abdullah tells compliments to Anna</Typography>
+          <Typography variant="h6" className="highlight" style={{ color: "red" }}>
+            { compliment }
           </Typography>
           <br />
           {/* let's make our button create a new game*/}
           <Button
               disabled={idLoading}
-              onClick={() => {
-                dispatch(createGame());
-              }}
+              onClick={handleClick}
               style={{ marginTop: 32, marginBottom: 32 }}
               disableElevation
               size="large"
               variant="contained"
               color="primary"
           >
-            start new game
+            Tell me something true
           </Button>
           {/* let's show an error message if there is one */}
           {idError && (
