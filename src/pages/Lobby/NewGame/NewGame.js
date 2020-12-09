@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Button, Grid, Typography } from "@material-ui/core";
 //let's import what we need
 import { useSelector } from "react-redux";
@@ -20,10 +20,10 @@ export default function NewGame() {
       "\"I love you\"",
   ]
 
-  const handleClick = useCallback(() => {
+  const handleClick = function () {
     setCompliment(complimentList[counter]);
     setCounter((counter + 1) % complimentList.length);
-  }, [counter, complimentList])
+  };
 
   return (
       <Grid container direction="row" justify="center" alignItems="center">
