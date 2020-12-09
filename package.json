@@ -22,6 +22,8 @@
     "build": "react-scripts build",
     "test": "CI=true react-scripts test",
     "test:functions": "jest test/* --coverage --setupFiles dotenv/config --testEnvironment node",
+    "test:functions:helloWorld": "jest test/helloWorld.test.js --coverage --setupFiles dotenv/config --testEnvironment node",
+    "test:functions:insertGame": "jest test/insertGame.test.js --coverage --setupFiles dotenv/config --testEnvironment node",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
