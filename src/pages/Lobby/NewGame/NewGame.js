@@ -2,12 +2,11 @@ import React, { useState, useCallback } from "react";
 import { Button, Grid, Typography } from "@material-ui/core";
 //let's import what we need
 import { useDispatch, useSelector } from "react-redux";
-import { selectGame, createGame } from "../../../store/gameSlice";
+import { selectGame } from "../../../store/gameSlice";
 
 export default function NewGame() {
   // let's connect Redux to our Component
-  const dispatch = useDispatch();
-  const { id, idError, idLoading } = useSelector(selectGame);
+  const { idError, idLoading } = useSelector(selectGame);
   const [compliment, setCompliment] = useState("");
   const [counter, setCounter] = useState(0);
   const complimentList = [
@@ -24,7 +23,7 @@ export default function NewGame() {
   const handleClick = useCallback(() => {
     setCompliment(complimentList[counter]);
     setCounter((counter + 1) % complimentList.length);
-  }, [counter])
+  }, [counter, complimentList])
 
   return (
       <Grid container direction="row" justify="center" alignItems="center">
