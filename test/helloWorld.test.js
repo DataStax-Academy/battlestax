@@ -1,7 +1,7 @@
-const helloWorld = require("../functions/helloWorld");
+const insertGame = require("../functions/insertGame");
 
 it("should return a JSON response", async () => {
-  const response = await helloWorld.handler();
+  const response = await insertGame.handler();
   const responseJson = JSON.parse(response.body);
   expect(responseJson.hello).toBe("world");
 });
