@@ -27,4 +27,5 @@ exports.handler = async (event, context) => {
     console.error(e);
     // let's return a 500 on error
   }
+
 };
