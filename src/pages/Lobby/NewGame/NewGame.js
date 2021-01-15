@@ -19,7 +19,7 @@ const { id, idError, idLoading } = useSelector(selectGame);
         <Typography color="textSecondary">game code</Typography>
         <Typography variant="h1" className="highlight">
           {/* let's display the game id */}
-          {"----"}
+          {id || "----"}
         </Typography>
         <br />
         {/* let's make our button create a new game*/}
