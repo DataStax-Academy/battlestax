@@ -1,0 +1,55 @@
+description: |
+ mockup of the workload for SlingTV
+scenarios:
+  schema: run tags===phase:schema driver=cql threads==undef cycles==undef
+  rampup: run tags===phase:rampup driver=cql cycles=TEMPLATE(rampup-cycles,1M)
+  main: run tags===phase:main driver=cql cycles=TEMPLATE(main-cycles,100000)
+bindings:
+ session: ToHashedUUID();
+ start: StartingEpochMillis('2021-02-01 00:00:00'); ToEpochTimeUUID();
+ data: HashedFileExtractToString('data/lorem_ipsum_full.txt',2000,10000)
+ read_session: ToHashedUUID()
+ start_minus_15m: StartingEpochMillis('2021-02-01 00:00:00'); Add(-900000); ToDate()
+ # data: HashedFileExtractToString('data/lorem_ipsum_full.txt',2000,2200,Normal(6000,1000.0))
+ # TODO: make a version of HashedFileExtract... which allows a distribution function
+blocks:
+  - name: schema
+    tags:
+     phase: schema
+    statements:
+     - create-keyspace: |
+        create keyspace if not exists TEMPLATE(keyspace,dynaman_ks)
+        WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': '<<rf:3>>'};
+     - create-table: |
+        create table if not exists TEMPLATE(keyspace,dynaman_ks).TEMPLATE(table,user_state) (
+         session uuid,
+         start timeuuid,
+         data text,
+         primary key ((session), start)
+        ) WITH CLUSTERING ORDER BY (start DESC)
+         AND compaction = {
+         'class': 'TimeWindowCompactionStrategy',
+         'compaction_window_size': <<expiry_minutes:60>>,
+         'compaction_window_unit': 'MINUTES'
+        };
+  - name: rampup
+    tags:
+     phase: rampup
+    params:
+      cl: <<write_cl:LOCAL_QUORUM>>
+    statements:
+     - insert-data: |
+        insert into TEMPLATE(keyspace,dynaman_ks).TEMPLATE(table,user_state)
+        ( session,   start,   data) VALUES
+        ({session}, {start}, {data});
+  - name: main
+    tags:
+     phase: main
+    statements:
+     - insert-data: |
+        insert into TEMPLATE(keyspace,dynaman_ks).TEMPLATE(table,user_state)
+        ( session,   start,   data) VALUES
+        ({session}, {start}, {data});
+     - select-data: |
+        select * from TEMPLATE(keyspace,dynaman_ks).TEMPLATE(table,user_state)
+        where session={read_session} and start>=minTimeuuid({start_minus_15m}) limit 4;
